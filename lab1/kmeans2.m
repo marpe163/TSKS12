@@ -8,7 +8,7 @@ function q_vec = kmeans2(data, N, k )
     
     tmp=size(data);
     tmp=tmp(2);
-for Y=1:200  
+for Y=1:35 
     Y
     association=[];
     for it=1:tmp

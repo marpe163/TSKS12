@@ -9,35 +9,30 @@ hold on
 plot(data(1,:),data(2,:),'bo')
 
 %% Task 2
+
 pic=imread('parrot5.jpg');
 pic=im2double(pic);
-tmp=size(pic);
-data=[];
-for it=1:tmp(1)
-   for jt=1:tmp(2)
-       tmp1=[pic(it,jt,1);pic(it,jt,2);pic(it,jt,3)];
-       data = [data tmp1];
-   end
-   it
-end
-q_vec = kmeans2(data,3,16);
-%%
-for it=1:length(data)
-    col=find_association(q_vec,data(:,it));
-    col
-    data(:,it)=q_vec(:,col);
+R=pic(:,:,1);
+G=pic(:,:,2);
+B=pic(:,:,3);
+Rvec=reshape(R,1,256*256);
+Gvec=reshape(G,1,256*256);
+Bvec=reshape(B,1,256*256);
+data=[Rvec;Gvec;Bvec];
+
+q_vec = kmeans2(data,3,4);
+rdypic=data;
+
+for it=1:length(rdypic)
+    col=find_association(q_vec,rdypic(:,it));
+    rdypic(:,it)=q_vec(:,col);
 end
 
-rdypic=zeros(256,256,3);
-counter=1;
-
-for kt=1:256
-    
-    for it=1:256
-        disp('wololo')
-        rdypic(it,jt,:)
-            rdypic(it,jt,:)=data(:,counter);
-            rdypic(it,jt,:)
-            counter=counter+1;
-    end
-end
+Rvec=rdypic(1,:);
+Gvec=rdypic(2,:);
+Bvec=rdypic(3,:);
+im=zeros(256,256,3);
+im(:,:,1)=reshape(Rvec,256,256);
+im(:,:,2)=reshape(Gvec,256,256);
+im(:,:,3)=reshape(Bvec,256,256);
+imshow(im)
