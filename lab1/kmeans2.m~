@@ -3,16 +3,26 @@ function q_vec = kmeans2(data, N, k )
 %   Detailed explanation goes here
     interval=[min(min(data)) max(max(data))];
     
+    
     %generating random quantization vectors of dim kx1.
-    %%q_vec=randi(round(interval),N,k);
-    q_vec=abs(rand())
+    q_vec=randi(round(interval),N,k);
+    q_vec=
+    
     tmp=size(data);
     tmp=tmp(2);
-for Y=1:20  
-    Y
+    acc_dist=1;
+    old_acc_dist=0;
+    counter=0;
+while acc_dist~=old_acc_dist
+    counter=counter+1
+    delta=abs(acc_dist-old_acc_dist)
     association=[];
+    old_acc_dist=acc_dist;
+    acc_dist=0;
     for it=1:tmp
-       association=[association find_association(q_vec,data(:,it))]; 
+        [col, min_dist]=find_association(q_vec,data(:,it));
+        acc_dist=acc_dist+min_dist;
+       association=[association col]; 
     end
     
     %update vectors to be center cluster points

@@ -1,4 +1,4 @@
-function col = find_association(q_points,vec )
+function [col,min_dist] = find_association(q_points,vec )
 %finds the column in q_points that is closest to the vector vec in
 %euclidian space.
     tmp=size(q_points);
