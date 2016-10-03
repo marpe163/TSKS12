@@ -1,56 +1,70 @@
-function q_points = kmeans( training_data,N,k, interval,eps )
-%Training a vector quantizer. N is the number of dimensions.
-% k is the number of cluster points. interval is a vector [a,b] 
-%marking available values for the vectors.
+function q_vec = kmeans2(data, N, k )
+% Implementation of the K-means algorithm
 
-%start with initiation by generating a set of k cluster points randomly.
-q_points=randi(interval,N,k);
-
-association = zeros(1,length(training_data)) % to keep track on what training points belong to which cluster point.
-new_dist = 0;
-old_dist = 10000
-%while abs(new_dist - old_dist) > eps
-for ittt=1:30 
-old_dist=new_dist
-    new_dist = 0;
-    for it=1:length(training_data)
-        distr=10000000000000; % big number.
-       for jt=1:k
-           tmp=norm(q_points(:,jt)-training_data(:,it));
-           if tmp < distr
-               distr=tmp;
-               association(it)=jt;
-           end
+    %Used when generating random cluster points.
+    a=min(min(data));
+    b=max(max(data));
+    
+    %generating k random quantization vectors of dim Nx1.
+    q_vec=(b-a)*rand(N,k)+a; 
+    %q_vec=[data(:,1) data(:,4)] %for task 1.
+    
+    tmp=size(data);
+    tmp=tmp(2);
+    acc_dist=1;
+    old_acc_dist=0;
+    counter=0;
+    
+%Iterate until there is no further reduction in distortion.
+while acc_dist~=old_acc_dist 
+    counter=counter+1;
+    delta=abs(acc_dist-old_acc_dist);
+    
+    %Print info. on current distortion and the current iteration.
+    if mod(counter,1)==0 
+       counter;
+       delta;
+    end
+    
+    %Associating finding the closest cluster point to all data points.
+    %Also calculates distortion (acc_dist).
+    
+    association=[];
+    old_acc_dist=acc_dist;
+    acc_dist=0;
+    for it=1:tmp
+        [col, min_dist]=find_association(q_vec,data(:,it));
+        acc_dist=acc_dist+min_dist;
+       association=[association col]; 
+    end
+    
+    %update cluster points to be the mean of their associated data points.
+    for it=1:k
+       indx=find_index(association,it);
+       if length(indx)>0
+          A=[];
+          
+          for jt=indx
+              A=[A data(:,jt)];
+          end
+          
+          q_vec(:,it)=column_mean(A);
+          
+       else
+           %If a cluster point has no data points associated to it,
+           %Randomize!
+           q_vec(:,it)=(b-a)*rand(N,1)+a;
        end
-       new_dist=new_dist+distr;
+       
     end
-    association;
-    for it=1:k %update cluster points
-        [~,ind]=find(association==it);
-        %association
-        %ind
-        if sum(size(ind))>1 && length(ind)~=0
-            disp('Im average')
-            training_data(:,ind)
-            q_points(:,it)
-            q_points(:,it)=(1/length(ind))*sum(training_data(:,ind)')';
-            q_points(:,it)
-        else
-            ind
-            disp('Im random')
-            q_points(:,it)=randi(interval,N,1);
-        end
-        
-    end
-    pause;
-    %training_data
-    %q_points
-    plot(training_data(1,:),training_data(2,:),'rx');
-    hold on
-    plot(q_points(:,1),q_points(:,2),'bo')
-    hold off
+    
+%     %For presenting the results in task 1
+%     subplot(2,2,counter);
+%     plot(q_vec(1,:),q_vec(2,:),'b*');
+%     hold on
+%     plot(data(1,:),data(2,:),'ro')
+%     title([num2str(counter) sprintf(' iteration(s)') ])
+
 end
-
-
 end
 
