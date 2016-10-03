@@ -13,7 +13,7 @@ title('After initialization')
 legend('Data points','Cluster points','Location','NorthWest')
 
 figure;
-q=kmeans(data,2,2)
+q=k_means(data,2,2)
 
 
 %% Task 2
@@ -44,7 +44,7 @@ for color=colors
     color
     
     %Apply the algorithm to the data
-    q_vec = kmeans(data,3,color);
+    q_vec = k_means(data,3,color);
     rdypic=data;
 
     %replace all data points with the closest cluster point

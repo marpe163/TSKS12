@@ -1,4 +1,4 @@
-function q_vec = kmeans2(data, N, k )
+function q_vec = k_means(data, N, k )
 % Implementation of the K-means algorithm
 
     %Used when generating random cluster points.
@@ -22,7 +22,7 @@ while acc_dist~=old_acc_dist
     
     %Print info. on current distortion and the current iteration.
     if mod(counter,1)==0 
-       counter;
+       counter; 
        delta;
     end
     
